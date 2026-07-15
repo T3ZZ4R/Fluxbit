@@ -1,11 +1,12 @@
 import "./css/App.css";
-import { Loader } from "./component/loader.js";
+import { Loader } from "./component/ui/loader.js";
 import { useEffect, useState } from "react";
-import { Header } from "./component/header.js";
-import { Sidebar } from "./component/sidebar.js";
-import { Nav } from "./component/nav.js";
+import { Header } from "./component/layout/header.js";
+import { Sidebar } from "./component/layout/sidebar.js";
+import { Nav } from "./component/layout/nav.js";
 import { Main } from "./component/main.js";
-import { Footer } from "./component/footer.js";
+import { Footer } from "./component/layout/footer.js";
+import { CoinList } from "./component/ui/coinlist.js";
 import axios from "axios";
 
 function App() {
@@ -13,18 +14,29 @@ function App() {
   const [sideBar, setSideBar] = useState(false);
   const [language, setLanguage] = useState("en");
   const [userNotification, setUserNOtificacion] = useState({});
-   const [currentPage,setCurrentPage]=useState('home');
-     const [coins, setCoins] = useState([]);
- const fetchData = async () => {
- try{    const res = await axios.get(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=200&page=1",
-    );
-    setCoins(res.data);
- }finally{  setLoader(false);}
-  }
+  const [currentPage, setCurrentPage] = useState("home");
+  const [coins, setCoins] = useState([]);
+  const [coinModalIsOpen, setCoinModalIsOpen] = useState(false);
+  
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=200&page=1",
+      );
+      setCoins(res.data);
+    } finally {
+      setLoader(false);
+    }
+  };
   useEffect(() => {
     fetchData();
   }, []);
+  useEffect(() => {
+    setLoader(true);
+    setTimeout(() => {
+      setLoader(false);
+    }, 500);
+  }, [coinModalIsOpen]);
   const userNOtificationHandler = (text, color = "black") => {
     setUserNOtificacion({ message: text, color: color });
     setTimeout(() => {
@@ -33,6 +45,11 @@ function App() {
   };
   return (
     <div className="App">
+      {coinModalIsOpen ? (
+        <CoinList coins={coins} setCoinModalIsOpen={setCoinModalIsOpen} />
+      ) : (
+        ""
+      )}
       {loading && <Loader />}
       <Header sideBar={sideBar} setSideBar={setSideBar} />
       <Sidebar isOpen={sideBar} setOpen={setSideBar} />
@@ -45,8 +62,14 @@ function App() {
       >
         {userNotification.message ? userNotification.message : ""}
       </div>
-      <Main currentPage={currentPage} setLoader={setLoader} coins={coins}/>
-      <Footer activePage={currentPage} setActivePage={setCurrentPage}/>
+      <Main
+        currentPage={currentPage}
+        setActivePage={setCurrentPage}
+        setLoader={setLoader}
+        coins={coins}
+        setCoinModalIsOpen={setCoinModalIsOpen}
+      />
+      <Footer activePage={currentPage} setActivePage={setCurrentPage} />
     </div>
   );
 }

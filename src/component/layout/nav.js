@@ -1,7 +1,7 @@
-import login from "../css/svg/ChatGPT Image Jun 29, 2026, 12_50_51 PM.png";
-import notification from "../css/svg/notifications_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import language from "../css/svg/language_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import upicon from"../css/svg/arrow_upward_20dp_E3E3E3_FILL0_wght400_GRAD0_opsz20.svg";
+import login from "../../css/svg/ChatGPT Image Jun 29, 2026, 12_50_51 PM.png";
+import notification from "../../css/svg/notifications_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
+import language from "../../css/svg/language_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
+import upicon from"../../css/svg/arrow_upward_20dp_E3E3E3_FILL0_wght400_GRAD0_opsz20.svg";
 import { useState } from "react";
 export const Nav = (props) => {
   const [notificationNumber, setNotificationNumber] = useState(0);
