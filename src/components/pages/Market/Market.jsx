@@ -1,4 +1,5 @@
-import arrow from'../../css/svg/down.png'
+import css from './Market.css'
+import arrow from'./icons/down.png'
 export const Markets = (props) => {
   return (
     

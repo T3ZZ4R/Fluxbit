@@ -1,4 +1,5 @@
-import cancel from "../../css/svg/close_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
+import css from './Sidebar.css'
+import cancel from "./icons/close.svg";
 export const Sidebar = (props) => {
   return (
     <div className={`slidebar ${props.isOpen ? "slidebar-active" : ""}`}>

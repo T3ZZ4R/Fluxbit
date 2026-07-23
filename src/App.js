@@ -1,12 +1,12 @@
 import "./css/App.css";
-import { Loader } from "./component/ui/loader.js";
+import { Loader } from "./components/ui/Loader/Loader.jsx";
 import { useEffect, useState } from "react";
-import { Header } from "./component/layout/header.js";
-import { Sidebar } from "./component/layout/sidebar.js";
-import { Nav } from "./component/layout/nav.js";
-import { Main } from "./component/main.js";
-import { Footer } from "./component/layout/footer.js";
-import { CoinList } from "./component/ui/coinlist.js";
+import { Header } from "./components/layout/Header/Header.jsx";
+import { Sidebar } from "./components/layout/Sidebar/Sidebar.jsx";
+import { Nav } from "./components/layout/Nav/Nav.jsx";
+import { Main } from "./components/main.js";
+import { Footer } from "./components/layout/Footer/Footer.jsx";
+import { CoinList } from "./components/ui/Coinlist/Coinlist.jsx";
 import axios from "axios";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [coins, setCoins] = useState([]);
   const [coinModalIsOpen, setCoinModalIsOpen] = useState(false);
-  
+
   const fetchData = async () => {
     try {
       const res = await axios.get(

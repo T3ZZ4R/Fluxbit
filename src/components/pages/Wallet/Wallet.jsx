@@ -1,5 +1,6 @@
+import css from './Wallet.css'
 import { useState } from "react";
-import cancel from "../../css/svg/close_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
+import cancel from "./icons/close.svg";
 export const Wallet = (props) => {
   const [withdarwModalIsOPen, setWithdarwModalIsOpen] = useState(null);
   return (

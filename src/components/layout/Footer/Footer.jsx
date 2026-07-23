@@ -1,8 +1,9 @@
-import history from "../../css/svg/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import wallet from "../../css/svg/wallet_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import trade from "../../css/svg/swap_horizontal_circle_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import markets from "../../css/svg/finance_mode_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import home from "../../css/svg/home_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
+import css from './Footer.css'
+import history from "./icons/history.svg";
+import wallet from "./icons/wallet.svg";
+import trade from "./icons/trade.svg";
+import markets from "./icons/markets.svg";
+import home from "./icons/home.svg";
 import { useState } from "react";
 export const Footer = (props) => {
    

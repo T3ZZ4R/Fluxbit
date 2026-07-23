@@ -1,0 +1,138 @@
+header {
+  border-bottom: 1px solid var(--main);
+  display: flex;
+  height: 10vh;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.header-left {
+  flex: 0 0 25%;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+
+.header-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+.header-center img {
+  max-height: 90%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.header-right {
+  flex: 0 0 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 1px;
+}
+
+.header-menu-btn {
+  flex: 1;
+  all: unset;
+  cursor: pointer;
+  position: relative;
+}
+
+.header-menu-btn img {
+  transition: all 1s ease;
+}
+
+.header-menu-btn:hover img {
+  opacity: 0.5;
+}
+
+.header-menu-btn img:active {
+  transform: scale(1.2);
+}
+
+.menu-btn-tooltip {
+  position: absolute;
+  left: 100%;
+  bottom: -35px;
+  transform: translateX(-50%);
+  background: whitesmoke;
+  color: black;
+  padding: 10px 6px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 99990;
+}
+
+.header-menu-btn:hover .menu-btn-tooltip {
+  opacity: 1;
+}
+.header-search {
+  display: flex;
+  align-items: stretch;
+  height: 40px;
+}
+
+.header-search-input {
+  all: unset;
+  flex: 1;
+  height: 100%;
+  width: 20vw;
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  border-right: none;
+  background-color: rgba(20, 20, 20, 0.05);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-radius: 5px 0 0 5px;
+  transition: all 0.2s ease;
+}
+
+.header-search-logo {
+  all: unset;
+  width: 40px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  transition: all 0.2s ease;
+}
+
+.header-search-logo img {
+  width: 18px;
+  height: 18px;
+}
+.header-search-logo:active {
+  transform: scale(0.9);
+}
+.header-search-input:focus {
+  border-color: var(--main);
+  transform: scale(1.2);
+}
+
+.header-search-input:focus + .header-search-logo {
+  border-color: var(--main);
+  transform: scale(1.2) translateX(10px);
+}

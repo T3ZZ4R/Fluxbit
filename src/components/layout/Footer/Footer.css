@@ -1,0 +1,41 @@
+.footer {
+  height: 12vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  border-top: 1px solid rgba(135, 187, 5, 0.4);
+}
+.footer div {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.footer div button {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: all ease 0.3s;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 12px;
+}
+.footer div button.active {
+  border: 1px solid rgba(255, 215, 0, 0.58);
+  background: rgba(255, 255, 255, 0.05);
+}
+.footer div button:active {
+  transform: scale(0.8);
+}
+.footer div button img {
+  max-width: 50px;
+}
+
+.footer div button:hover {
+  opacity: 0.6;
+}

@@ -1,6 +1,7 @@
-import menu from"../../css/svg/side_navigation_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"
-import logo from'../../css/svg/logo.png'
-import search from '../../css/svg/search_17dp_E3E3E3_FILL0_wght400_GRAD0_opsz20.svg'
+import css from './Header.css'
+import menu from"./icons/sidebar.svg"
+import logo from'./icons/logo.png'
+import search from './icons/search.svg'
 export const Header=(props)=>{return(<header>
    <div className="header-left">
   <button

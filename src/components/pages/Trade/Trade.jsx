@@ -1,4 +1,5 @@
-import arrow from "../../css/svg/down.png";
+import css from './Trade.css'
+import arrow from "./icons/down.png";
 export const Trade = (props) => {
   return (
     <div className="trade">

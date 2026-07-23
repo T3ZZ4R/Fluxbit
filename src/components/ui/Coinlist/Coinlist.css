@@ -1,0 +1,86 @@
+.coin-choice-modal {
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(100px);
+  display: flex;
+  flex-direction: column;
+}
+.coinlist-header p {
+  padding-left: 10px;
+  font-size: xx-large;
+}
+.modal-coin-list {
+  all: unset;
+  margin: 0;
+
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.coinlist-header {
+  padding: 20px;
+}
+.modal-coin-list li {
+  list-style: none;
+  padding: 0px 10px 0px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 15%;
+  background: rgba(0, 0, 0, 0.126);
+  border-bottom: 1px solid rgb(81, 79, 79);
+  transition: all ease 0.5s;
+}
+.modal-coin-list li p {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-coin-list li img {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  object-fit: contain;
+  height: 50%;
+  box-sizing: border-box;
+}
+.modal-coin-list .modal-coin-list-items {
+  cursor: pointer;
+}
+.modal-coin-list-items:hover {
+  opacity: 0.7;
+}
+.modal-coin-list li img {
+  display: flex;
+  justify-content: center;
+  width: 40px;
+}
+.modal-coin-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-coin-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  transition: all ease 1s;
+}
+
+.modal-coin-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 193, 7, 0.5);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.modal-coin-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 193, 7, 0.8);
+}
+

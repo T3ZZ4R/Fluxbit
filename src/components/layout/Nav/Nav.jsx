@@ -1,7 +1,8 @@
-import login from "../../css/svg/ChatGPT Image Jun 29, 2026, 12_50_51 PM.png";
-import notification from "../../css/svg/notifications_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import language from "../../css/svg/language_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
-import upicon from"../../css/svg/arrow_upward_20dp_E3E3E3_FILL0_wght400_GRAD0_opsz20.svg";
+import css from './Nav.css'
+import login from "./icons/login.png";
+import notification from "./icons/notification.svg";
+import language from "./icons/language.svg";
+import upIcon from"./icons/upIcon.svg";
 import { useState } from "react";
 export const Nav = (props) => {
   const [notificationNumber, setNotificationNumber] = useState(0);
@@ -35,9 +36,9 @@ export const Nav = (props) => {
   return (
     <div  className="navbar">
       <div  onMouseLeave={leaveHandler}onMouseEnter={clearCloseTimer} className="navbar-left">
-        <div onClick={()=>{interHandler('balance')}}><img className={navbarModal==='balance'?'navbar-arrow--active':''} src={upicon}></img>Balance</div>
-        <div onClick={()=>{interHandler('market')}}><img className={navbarModal==='market'?'navbar-arrow--active':""} src={upicon}></img>Markets</div>
-        <div onClick={()=>{interHandler('trade')}} className="navbar-trade"><img className={navbarModal==='trade'?'navbar-arrow--active':" "} src={upicon}></img>Trade</div>
+        <div onClick={()=>{interHandler('balance')}}><img className={navbarModal==='balance'?'navbar-arrow--active':''} src={upIcon}></img>Balance</div>
+        <div onClick={()=>{interHandler('market')}}><img className={navbarModal==='market'?'navbar-arrow--active':""} src={upIcon}></img>Markets</div>
+        <div onClick={()=>{interHandler('trade')}} className="navbar-trade"><img className={navbarModal==='trade'?'navbar-arrow--active':" "} src={upIcon}></img>Trade</div>
         <span className={` navbar-modal ${navbarModal&&"navbar-modal--active"}`}>{navbarModal}</span></div>
       <div className="navbar-right">
         <div className="language-btns">

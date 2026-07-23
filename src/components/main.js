@@ -1,8 +1,8 @@
-import { History } from "./pages/history"
-import { Home } from "./pages/home"
-import { Markets } from "./pages/markets"
-import { Trade } from "./pages/trade"
-import { Wallet } from "./pages/wallet"
+import { History } from "./pages/History/History"
+import { Home } from "./pages/Home/Home"
+import { Markets } from "./pages/Market/Market"
+import { Trade } from "./pages/Trade/Trade"
+import { Wallet } from "./pages/Wallet/Wallet"
 
 export const Main=(props)=>{
     return(<div className="main">

@@ -1,4 +1,5 @@
 import axios from "axios";
+import css from './Home.css'
 import { useState, useEffect, useRef } from "react";
 
 export const Home = (props) => {

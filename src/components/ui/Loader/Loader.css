@@ -1,0 +1,30 @@
+.spinner {
+  position: fixed;
+  inset: 0;
+  background-color: #00000083;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  backdrop-filter: blur(10px);
+}
+
+.loader {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 9px double var(--main);
+  border-left: 9px transparent;
+  animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-text {
+  margin-top: 20px;
+}

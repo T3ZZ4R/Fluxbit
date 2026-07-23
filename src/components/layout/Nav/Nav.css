@@ -1,0 +1,179 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 9vh;
+  gap: 10px;
+  box-shadow: 3px 0.5px 11px 1px var(--main);
+  position: relative;
+}
+.navbar-left {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 5;
+}
+.navbar-left div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  border-right: 1px solid rgba(135, 134, 134, 0.529);
+  transition: all ease 0.5s;
+  cursor: pointer;
+}
+.navbar-left div:hover {
+  border-right: 1px solid gray;
+  opacity: 0.5;
+}
+.navbar-left div:active {
+  transform: scale(0.9) translateX(-1px);
+}
+.navbar-left div img {
+  transition: all ease 0.8s;
+}
+
+.navbar-modal {
+  position: absolute;
+  left: 12.5%;
+  width: 75%;
+  height: 0vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+  transition: all 0.5s ease;
+  box-shadow: 3px 0 40px 0 rgba(0, 0, 0, 0.9);
+  border-radius: 5px;
+  opacity: 0;
+}
+
+.navbar-modal--active {
+  transform: translateY(20.5vh);
+  height: 30vh;
+  opacity: 1;
+  backdrop-filter: blur(30px);
+}
+.navbar-arrow--active {
+  transform: rotate(180deg);
+}
+.navbar-right {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.navbar-right div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: relative;
+}
+.notification-btn {
+  all: unset;
+  cursor: pointer;
+  transition: all ease 1s;
+}
+.notification-number {
+  position: absolute;
+  top: 12px;
+  right: -3px;
+  font-size: 10px;
+  background-color: var(--main);
+  border-radius: 20px;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+}
+.notification-number--pop {
+  transform: scale(1-2);
+}
+.notification-btn:hover {
+  transform: translateY(-3px);
+}
+.notification-btn img {
+  transition: all ease 0.5s;
+}
+.notification-btn:hover img {
+  opacity: 0.5;
+}
+.notification-btn:active {
+  transform: scale(0.8);
+}
+.profile-area {
+  flex: 0.5;
+}
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--main);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transform: scale(0.9);
+}
+
+.profile-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.language-btn {
+  all: unset;
+  cursor: pointer;
+  transition: all ease 0.5s;
+}
+.language-btn:hover {
+  transform: translateY(-3px);
+}
+.language-btn img {
+  transition: all ease 0.5s;
+}
+.language-btn:hover img {
+  opacity: 0.8;
+}
+.language-btn:active {
+  transform: scale(0.8);
+}
+.user-notification {
+  width: 0%;
+  right: 0;
+  top: 9vh;
+  height: 4vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transition: all ease 1s;
+  background-color: #cf0707cf;
+  backdrop-filter: blur(20px);
+  border-radius: 4px;
+  box-shadow: 5px 5px 30px 0px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transform: translateX(120%);
+}
+.user-notification--active {
+  opacity: 1;
+  width: 40%;
+  overflow: hidden;
+  padding: 20px;
+  transform: translateX(0);
+}
