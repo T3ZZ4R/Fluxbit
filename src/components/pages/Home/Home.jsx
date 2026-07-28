@@ -1,11 +1,14 @@
 import axios from "axios";
 import css from './Home.css'
+
 import { useState, useEffect, useRef } from "react";
+import { trade } from "../../layout/Sidebar/icons";
 
 export const Home = (props) => {
   const [selectBoxIsOpen, setSelectBoxIsOpen] = useState(false);
   const [showItems, setShowItems] = useState(false);
   const [filter, setFilter] = useState("All");
+  
   const boxRef = useRef(null);
   const filterBoxClickHandler = (f) => {
     setFilter(f);
@@ -25,7 +28,6 @@ export const Home = (props) => {
     }
   }, [selectBoxIsOpen]);
 
-  console.log(props.coins);
 
   return (
     <div className="home">
@@ -84,7 +86,8 @@ export const Home = (props) => {
                 key={c.id}
                 className="card"
                 onClick={(e) => {
-                  console.log(c.id);
+                  props.setSelectedCoin(c.id)
+                  props.setActivePage('markets')
                 }}
               >
                 <div className="card-body">

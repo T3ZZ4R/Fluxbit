@@ -17,7 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [coins, setCoins] = useState([]);
   const [coinModalIsOpen, setCoinModalIsOpen] = useState(false);
-
+const [selectedCoin,setSelectedCoin]=useState(null);
   const fetchData = async () => {
     try {
       const res = await axios.get(
@@ -46,13 +46,13 @@ function App() {
   return (
     <div className="App">
       {coinModalIsOpen ? (
-        <CoinList coins={coins} setCoinModalIsOpen={setCoinModalIsOpen} />
+        <CoinList coins={coins} setCoinModalIsOpen={setCoinModalIsOpen} setSelectedCoin={setSelectedCoin}/>
       ) : (
         ""
       )}
       {loading && <Loader />}
       <Header sideBar={sideBar} setSideBar={setSideBar} />
-      <Sidebar isOpen={sideBar} setOpen={setSideBar} />
+      <Sidebar isOpen={sideBar} setOpen={setSideBar} setCurrentPage={setCurrentPage} />
       <Nav language={language} setLanguage={setLanguage} />
       <div
         style={{
@@ -63,6 +63,8 @@ function App() {
         {userNotification.message ? userNotification.message : ""}
       </div>
       <Main
+      selectedCoin={selectedCoin}
+      setSelectedCoin={setSelectedCoin}
         currentPage={currentPage}
         setActivePage={setCurrentPage}
         setLoader={setLoader}

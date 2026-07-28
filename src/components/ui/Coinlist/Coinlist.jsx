@@ -23,7 +23,7 @@ export const CoinList = (props) => {
             alt="cancel-button"
           />
 
-          <span className="slidebar-cancel-btn-tooltip">Close</span>
+         
         </button>
       </header>
       <ul className="modal-coin-list">
@@ -35,7 +35,9 @@ export const CoinList = (props) => {
         </li>
         {props.coins.map((c) => {
           return (
-            <li key={c.id} className="modal-coin-list-items">
+            <li onClick={()=>{props.setSelectedCoin(c.id);
+              props.setCoinModalIsOpen(false)
+            }} key={c.id} className="modal-coin-list-items">
               <img src={c.image}></img>
               <p>{c.name.split(" ")[0]}</p>
               <p

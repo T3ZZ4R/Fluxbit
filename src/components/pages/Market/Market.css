@@ -29,6 +29,8 @@
 .market-chartbox {
   display: flex;
   width: 100%;
+  max-width: 100%;
+  cursor: pointer;
   height: 60%;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 6px 20px 1px rgba(255, 255, 255, 0.151);
@@ -130,6 +132,11 @@
   flex: 1;
   justify-content: center;
   align-items: center;
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .market-details .market-detail-item {
   justify-content: left;

@@ -13,9 +13,7 @@ export const Header=(props)=>{return(<header>
   >
     <img src={menu} alt="menu-button" />
 
-    <span className="menu-btn-tooltip">
-      Menu
-    </span>
+  
   </button>
 </div>
     <div className='header-center'>

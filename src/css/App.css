@@ -33,6 +33,7 @@ body {
   font-variant-numeric: tabular-nums;
   box-sizing: border-box;
   color: aliceblue;
+  font-size: 3vw;
 }
 
 .App {
