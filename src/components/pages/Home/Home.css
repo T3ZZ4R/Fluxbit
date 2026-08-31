@@ -101,7 +101,7 @@
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(2, 1fr);
-  grid-auto-columns: 22.5%;
+  grid-auto-columns: 32%;
   gap: 2%;
   user-select: none;
   -webkit-user-select: none;
@@ -142,15 +142,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
-  overflow: hidden;
-
-  background: rgba(71, 71, 71, 0.178);
+  background: rgba(71, 71, 71, 0.218);
   border: 1px solid rgba(96, 102, 32, 0.529);
   border-radius: 7px;
-
   transition: all ease 0.5s;
-
   cursor: pointer;
 }
 
@@ -163,7 +158,6 @@
 }
 
 .card-body {
-  padding-top: 10px;
   width: 100%;
   height: 100%;
 
@@ -173,8 +167,6 @@
   align-items: center;
 
   gap: 10px;
-
-  overflow: hidden;
 }
 
 .card-body img {
@@ -183,9 +175,10 @@
 }
 
 .card-body p {
-  font-size: 2vw;
+  font-size: 100%;
+  font-weight: 200;
   margin: 0;
-  max-width: 90%;
+  max-width: 100%;
   flex: 1;
   display: flex;
   justify-content: center;
@@ -193,8 +186,8 @@
 }
 
 .card-body .price {
-  font-size: 2wv;
-  font-weight: bold;
+  font-size: 100%;
+  font-weight: lighter;
 }
 .home-scroll-buttons {
   position: fixed;
