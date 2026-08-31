@@ -37,16 +37,15 @@ export const Sidebar = (props) => {
         </button>
       </div>
       <div className="sidebar-menu">
-        <button className="dashbord">
+        <button className="dashbord" onClick={() => clickHandler("dashboard")}>
           <img src={dashbord} alt="dashbord" />
           Dashbord
         </button>
-        <button
-        onClick={()=>clickHandler('home')}>
+        <button onClick={() => clickHandler("home")}>
           <img src={home} alt="home" />
           Home
         </button>
-        <button onClick={()=>clickHandler("markets")}>
+        <button onClick={() => clickHandler("markets")}>
           <img src={markets} alt="markets" />
           Markets
         </button>
@@ -58,11 +57,11 @@ export const Sidebar = (props) => {
           <img src={trade} alt="trade" />
           Trade
         </button>
-        <button onClick={()=>clickHandler('wallet')}>
+        <button onClick={() => clickHandler("wallet")}>
           <img src={wallet} alt="wallet" />
           Wallet
         </button>
-        <button onClick={()=>clickHandler('history')}>
+        <button onClick={() => clickHandler("history")}>
           <img src={history} alt="history" />
           History
         </button>
@@ -70,15 +69,27 @@ export const Sidebar = (props) => {
           <img src={bookmark} alt="bookmark" />
           Bookmark
         </button>
-        <button>
+        <button
+          onClick={() => {
+            clickHandler("notification");
+          }}
+        >
           <img src={notification} alt="notification" />
           Notification
         </button>
-        <button>
+        <button
+          onClick={() => {
+            clickHandler("settings");
+          }}
+        >
           <img src={setting} alt="setting" />
           Setting
         </button>
-        <button>
+        <button
+          onClick={() => {
+            clickHandler("profile");
+          }}
+        >
           <img src={profile} alt="profile" />
           Profile
         </button>

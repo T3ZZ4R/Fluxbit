@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>مدیریت موتورخونه</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap");
+      * {
+        font-family: "Vazirmatn", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+      }
+      .rtl {
+        direction: rtl;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+
+      // ======================== داده‌های اولیه ========================
+      const DEFAULT_DATA = {
+        users: [
+          {
+            id: 1,
+            name: "علی رضایی",
+            role: "admin",
+            password: "1234",
+            waterTaken: 2.5,
+            lastWaterTime: "2026-08-21T08:30",
+            debt: 0,
+            isDebtPaid: true,
+          },
+          {
+            id: 2,
+            name: "مریم حسینی",
+            role: "admin",
+            password: "1234",
+            waterTaken: 1.8,
+            lastWaterTime: "2026-08-20T16:45",
+            debt: 200000,
+            isDebtPaid: false,
+          },
+          {
+            id: 3,
+            name: "رضا کریمی",
+            role: "user",
+            password: "1234",
+            waterTaken: 0,
+            lastWaterTime: null,
+            debt: 0,
+            isDebtPaid: true,
+          },
+          {
+            id: 4,
+            name: "سارا محمدی",
+            role: "user",
+            password: "1234",
+            waterTaken: 3.2,
+            lastWaterTime: "2026-08-21T10:15",
+            debt: 150000,
+            isDebtPaid: false,
+          },
+        ],
+        powerOutages: [
+          { id: 1, date: "2026-08-21", start: "14:00", end: "16:30" },
+          { id: 2, date: "2026-08-22", start: "10:00", end: "12:00" },
+        ],
+        waterRecords: [
+          {
+            userId: 1,
+            amount: 2.5,
+            timestamp: "2026-08-21T08:30",
+            image: null,
+            status: "confirmed",
+          },
+          {
+            userId: 2,
+            amount: 1.8,
+            timestamp: "2026-08-20T16:45",
+            image: null,
+            status: "pending",
+          },
+          {
+            userId: 4,
+            amount: 3.2,
+            timestamp: "2026-08-21T10:15",
+            image: null,
+            status: "confirmed",
+          },
+        ],
+        notifications: [
+          {
+            id: 1,
+            userId: 2,
+            message: "بدهی ۲۰۰,۰۰۰ تومان تسویه نشده!",
+            date: "2026-08-21",
+            isRead: false,
+          },
+        ],
+        news: [
+          {
+            id: 1,
+            author: "علی رضایی",
+            text: "موتور برق فردا تعویض می‌شود",
+            timestamp: "2026-08-20T18:00",
+          },
+        ],
+      };
+
+      // ======================== توابع کمکی ========================
+      const generateId = () => Date.now() + Math.random();
+
+      const getWaterSchedule = (lastWaterTime, powerOutages) => {
+        if (!lastWaterTime) return { nextWaterTime: null, delay: 0 };
+        const baseInterval = 12; // ساعت
+        let nextTime = new Date(lastWaterTime);
+        nextTime.setHours(nextTime.getHours() + baseInterval);
+
+        // محاسبه تاخیر ناشی از قطعی برق
+        let totalDelay = 0;
+        const lastDate = new Date(lastWaterTime);
+        powerOutages.forEach((outage) => {
+          const outageDate = new Date(outage.date + "T" + outage.start);
+          const outageEnd = new Date(outage.date + "T" + outage.end);
+          if (outageDate > lastDate && outageDate < nextTime) {
+            const delay = (outageEnd - outageDate) / (1000 * 60 * 60);
+            totalDelay += delay;
+          }
+        });
+
+        nextTime.setHours(nextTime.getHours() + totalDelay);
+        return { nextWaterTime: nextTime.toISOString(), delay: totalDelay };
+      };
+
+      const formatDate = (isoString) => {
+        if (!isoString) return "—";
+        const d = new Date(isoString);
+        return d.toLocaleString("fa-IR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      };
+
+      // ======================== کامپوننت‌ها ========================
+
+      // ----- صفحه ورود -----
+      const LoginPage = ({ onLogin }) => {
+        const [username, setUsername] = useState("");
+        const [password, setPassword] = useState("");
+        const [error, setError] = useState("");
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          const user = DEFAULT_DATA.users.find(
+            (u) => u.name === username && u.password === password,
+          );
+          if (user) {
+            onLogin(user);
+          } else {
+            setError("نام کاربری یا رمز عبور اشتباه است");
+          }
+        };
+
+        return (
+          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+            <div className="bg-white/80 backdrop-blur-lg p-8 rounded-3xl shadow-xl w-full max-w-md border border-white/30">
+              <div className="text-center mb-8">
+                <div className="text-5xl mb-3">🚰</div>
+                <h1 className="text-3xl font-black text-indigo-800">
+                  مدیریت موتورخونه
+                </h1>
+                <p className="text-gray-500 mt-1">ورود به سیستم</p>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    نام کاربری
+                  </label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    placeholder="نام خود را وارد کنید"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    رمز عبور
+                  </label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                {error && (
+                  <div className="text-red-500 text-sm bg-red-50 p-3 rounded-xl">
+                    {error}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg hover:shadow-xl"
+                >
+                  ورود
+                </button>
+              </form>
+              <div className="mt-6 text-center text-sm text-gray-400">
+                کاربران نمونه: علی (ادمین) / مریم (ادمین) / رضا (کاربر) / سارا
+                (کاربر) — رمز: 1234
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // ----- داشبورد کاربر -----
+      const UserDashboard = ({ user, onLogout }) => {
+        const [users, setUsers] = useState(DEFAULT_DATA.users);
+        const [outages, setOutages] = useState(DEFAULT_DATA.powerOutages);
+        const [records, setRecords] = useState(DEFAULT_DATA.waterRecords);
+        const [notifications, setNotifications] = useState(
+          DEFAULT_DATA.notifications,
+        );
+        const [news, setNews] = useState(DEFAULT_DATA.news);
+        const [activeTab, setActiveTab] = useState("dashboard");
+        const [imageFile, setImageFile] = useState(null);
+        const [newsText, setNewsText] = useState("");
+        const [showOutageModal, setShowOutageModal] = useState(false);
+        const [newOutage, setNewOutage] = useState({
+          date: "",
+          start: "",
+          end: "",
+        });
+
+        const currentUser = users.find((u) => u.id === user.id);
+        const userRecords = records.filter((r) => r.userId === user.id);
+
+        // محاسبه نوبت بعدی
+        const { nextWaterTime, delay } = getWaterSchedule(
+          currentUser?.lastWaterTime,
+          outages,
+        );
+
+        // کل آب مصرفی
+        const totalWater = userRecords.reduce(
+          (sum, r) => sum + (r.status === "confirmed" ? r.amount : 0),
+          0,
+        );
+
+        // وضعیت بدهی
+        const debt = currentUser?.debt || 0;
+        const isDebtPaid = currentUser?.isDebtPaid || false;
+
+        // نوتیفیکیشن‌های این کاربر
+        const userNotifs = notifications.filter(
+          (n) => n.userId === user.id && !n.isRead,
+        );
+
+        // تسویه بدهی
+        const handlePayDebt = () => {
+          const updated = users.map((u) => {
+            if (u.id === user.id) {
+              return { ...u, debt: 0, isDebtPaid: true };
+            }
+            return u;
+          });
+          setUsers(updated);
+          // بروزرسانی نوتیفیکیشن
+          const updatedNotifs = notifications.map((n) => {
+            if (n.userId === user.id) {
+              return { ...n, isRead: true };
+            }
+            return n;
+          });
+          setNotifications(updatedNotifs);
+          alert("✅ بدهی شما تسویه شد!");
+        };
+
+        // ارسال حواله
+        const handleSubmitWaterRecord = (e) => {
+          e.preventDefault();
+          const amount = parseFloat(e.target.amount.value);
+          if (!amount || amount <= 0)
+            return alert("لطفاً مقدار آب را وارد کنید");
+
+          const newRecord = {
+            userId: user.id,
+            amount: amount,
+            timestamp: new Date().toISOString(),
+            image: imageFile ? URL.createObjectURL(imageFile) : null,
+            status: "pending",
+          };
+
+          setRecords([...records, newRecord]);
+
+          // بروزرسانی lastWaterTime برای کاربر
+          const updatedUsers = users.map((u) => {
+            if (u.id === user.id) {
+              return {
+                ...u,
+                waterTaken: u.waterTaken + amount,
+                lastWaterTime: new Date().toISOString(),
+              };
+            }
+            return u;
+          });
+          setUsers(updatedUsers);
+          setImageFile(null);
+          e.target.reset();
+          alert("✅ حواله با موفقیت ارسال شد و در انتظار تایید ادمین است");
+        };
+
+        // ارسال خبر
+        const handleSendNews = (e) => {
+          e.preventDefault();
+          if (!newsText.trim()) return;
+          const newNews = {
+            id: generateId(),
+            author: user.name,
+            text: newsText,
+            timestamp: new Date().toISOString(),
+          };
+          setNews([...news, newNews]);
+          setNewsText("");
+          alert("📢 خبر با موفقیت ارسال شد");
+        };
+
+        // ----- رندر -----
+        return (
+          <div className="min-h-screen bg-gray-50">
+            {/* هدر */}
+            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">💧</span>
+                  <h1 className="text-xl font-bold text-indigo-700">
+                    موتورخونه
+                  </h1>
+                  <span className="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+                    {user.role === "admin" ? "👑 ادمین" : "👤 کاربر"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600">{user.name}</span>
+                  <button
+                    onClick={onLogout}
+                    className="text-sm bg-red-50 text-red-600 px-4 py-2 rounded-xl hover:bg-red-100 transition"
+                  >
+                    خروج
+                  </button>
+                </div>
+              </div>
+            </header>
+
+            {/* محتوای اصلی */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+              {/* تب‌ها */}
+              <div className="flex flex-wrap gap-2 mb-6 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
+                {["dashboard", "records", "news", "adminPanel"].map((tab) => {
+                  if (tab === "adminPanel" && user.role !== "admin")
+                    return null;
+                  return (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveTab(tab)}
+                      className={`px-5 py-2 rounded-xl text-sm font-medium transition ${activeTab === tab ? "bg-indigo-600 text-white shadow-md" : "text-gray-600 hover:bg-gray-100"}`}
+                    >
+                      {tab === "dashboard" && "📊 داشبورد"}
+                      {tab === "records" && "📋 حواله‌ها"}
+                      {tab === "news" && "📰 اخبار"}
+                      {tab === "adminPanel" && "⚙️ مدیریت"}
+                    </button>
+                  );
+                })}
+                {userNotifs.length > 0 && (
+                  <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full self-center">
+                    {userNotifs.length} هشدار
+                  </span>
+                )}
+              </div>
+
+              {/* ===== تب داشبورد ===== */}
+              {activeTab === "dashboard" && (
+                <div className="space-y-6">
+                  {/* کارت‌های اطلاعاتی */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                      <div className="text-sm text-gray-500">کل آب مصرفی</div>
+                      <div className="text-2xl font-bold text-indigo-600">
+                        {totalWater.toFixed(1)} لیتر
+                      </div>
+                    </div>
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                      <div className="text-sm text-gray-500">نوبت بعدی</div>
+                      <div className="text-xl font-bold text-green-600">
+                        {nextWaterTime ? formatDate(nextWaterTime) : "ثبت نشده"}
+                      </div>
+                      {delay > 0 && (
+                        <div className="text-xs text-orange-500">
+                          +{delay.toFixed(1)} ساعت تاخیر قطعی
+                        </div>
+                      )}
+                    </div>
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                      <div className="text-sm text-gray-500">وضعیت بدهی</div>
+                      <div
+                        className={`text-xl font-bold ${debt > 0 && !isDebtPaid ? "text-red-600" : "text-green-600"}`}
+                      >
+                        {debt > 0 && !isDebtPaid
+                          ? `${debt.toLocaleString()} تومان`
+                          : "✅ تسویه شده"}
+                      </div>
+                      {debt > 0 && !isDebtPaid && (
+                        <button
+                          onClick={handlePayDebt}
+                          className="mt-2 bg-green-500 text-white px-4 py-1 rounded-lg text-sm hover:bg-green-600 transition"
+                        >
+                          تسویه بدهی
+                        </button>
+                      )}
+                    </div>
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                      <div className="text-sm text-gray-500">وضعیت</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span
+                          className={`w-3 h-3 rounded-full ${user.isDebtPaid ? "bg-green-500" : "bg-red-500"}`}
+                        ></span>
+                        <span>{user.isDebtPaid ? "فعال" : "بدهی معوق"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* هشدارها */}
+                  {userNotifs.length > 0 && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
+                      <h3 className="font-bold text-red-700 flex items-center gap-2">
+                        🔔 هشدارها
+                      </h3>
+                      {userNotifs.map((n) => (
+                        <div
+                          key={n.id}
+                          className="mt-2 text-sm text-red-600 bg-white p-3 rounded-xl shadow-sm"
+                        >
+                          {n.message}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* جدول زمان قطعی برق */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      ⚡ برنامه قطعی برق
+                    </h3>
+                    {outages.length > 0 ? (
+                      <div className="space-y-2">
+                        {outages.map((o) => (
+                          <div
+                            key={o.id}
+                            className="flex items-center justify-between bg-gray-50 p-3 rounded-xl"
+                          >
+                            <span>{formatDate(o.date + "T00:00")}</span>
+                            <span className="font-mono">
+                              {o.start} - {o.end}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-gray-400">هیچ قطعی ثبت نشده</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ===== تب حواله‌ها ===== */}
+              {activeTab === "records" && (
+                <div className="space-y-6">
+                  {/* فرم ثبت حواله */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      📤 ثبت حواله جدید
+                    </h3>
+                    <form
+                      onSubmit={handleSubmitWaterRecord}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          مقدار آب (لیتر)
+                        </label>
+                        <input
+                          type="number"
+                          name="amount"
+                          step="0.1"
+                          className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500"
+                          placeholder="مثال: 2.5"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-600 mb-1">
+                          عکس حواله (اختیاری)
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => setImageFile(e.target.files[0])}
+                          className="w-full px-4 py-2 rounded-xl border border-gray-200"
+                        />
+                        {imageFile && (
+                          <div className="text-sm text-green-600 mt-1">
+                            ✅ {imageFile.name}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="submit"
+                        className="bg-indigo-600 text-white px-6 py-2 rounded-xl hover:bg-indigo-700 transition"
+                      >
+                        ثبت حواله
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* لیست حواله‌ها */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      📋 تاریخچه حواله‌ها
+                    </h3>
+                    {userRecords.length > 0 ? (
+                      <div className="space-y-3">
+                        {userRecords.map((r) => (
+                          <div
+                            key={r.id}
+                            className="flex items-center justify-between bg-gray-50 p-3 rounded-xl"
+                          >
+                            <div>
+                              <div className="font-bold">{r.amount} لیتر</div>
+                              <div className="text-xs text-gray-500">
+                                {formatDate(r.timestamp)}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`text-xs px-3 py-1 rounded-full ${r.status === "confirmed" ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                              >
+                                {r.status === "confirmed"
+                                  ? "✅ تایید شده"
+                                  : "⏳ در انتظار"}
+                              </span>
+                              {r.image && (
+                                <a
+                                  href={r.image}
+                                  target="_blank"
+                                  className="text-blue-500 text-sm"
+                                >
+                                  🖼️ عکس
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-gray-400">هیچ حواله‌ای ثبت نشده</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ===== تب اخبار ===== */}
+              {activeTab === "news" && (
+                <div className="space-y-6">
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      📢 ارسال خبر جدید
+                    </h3>
+                    <form onSubmit={handleSendNews} className="space-y-3">
+                      <textarea
+                        value={newsText}
+                        onChange={(e) => setNewsText(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500"
+                        rows="3"
+                        placeholder="متن خبر را وارد کنید..."
+                        required
+                      />
+                      <button
+                        type="submit"
+                        className="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition"
+                      >
+                        ارسال خبر
+                      </button>
+                    </form>
+                  </div>
+
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      📰 اخبار موتورخونه
+                    </h3>
+                    {news.length > 0 ? (
+                      <div className="space-y-3">
+                        {news
+                          .slice()
+                          .reverse()
+                          .map((n) => (
+                            <div
+                              key={n.id}
+                              className="bg-gray-50 p-4 rounded-xl border-r-4 border-indigo-500"
+                            >
+                              <div className="flex justify-between">
+                                <span className="font-bold text-indigo-700">
+                                  {n.author}
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                  {formatDate(n.timestamp)}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-gray-700">{n.text}</p>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <div className="text-gray-400">هیچ خبری وجود ندارد</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ===== پنل ادمین ===== */}
+              {activeTab === "adminPanel" && user.role === "admin" && (
+                <div className="space-y-6">
+                  {/* مدیریت کاربران */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      👥 مدیریت کاربران
+                    </h3>
+                    <div className="space-y-2">
+                      {users.map((u) => (
+                        <div
+                          key={u.id}
+                          className="flex items-center justify-between bg-gray-50 p-3 rounded-xl"
+                        >
+                          <div>
+                            <span className="font-bold">{u.name}</span>
+                            <span className="text-xs text-gray-500 mr-2">
+                              ({u.role})
+                            </span>
+                            <span className="text-xs bg-indigo-100 px-2 py-1 rounded-full mr-2">
+                              {u.waterTaken} لیتر
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                const updated = users.map((user) => {
+                                  if (user.id === u.id) {
+                                    return {
+                                      ...user,
+                                      isDebtPaid: !user.isDebtPaid,
+                                    };
+                                  }
+                                  return user;
+                                });
+                                setUsers(updated);
+                              }}
+                              className={`text-xs px-3 py-1 rounded-full ${u.isDebtPaid ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                            >
+                              {u.isDebtPaid ? "بدهی تسویه" : "بدهی معوق"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* تایید حواله‌ها */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      ✅ تایید حواله‌ها
+                    </h3>
+                    {records.filter((r) => r.status === "pending").length >
+                    0 ? (
+                      records
+                        .filter((r) => r.status === "pending")
+                        .map((r) => {
+                          const user = users.find((u) => u.id === r.userId);
+                          return (
+                            <div
+                              key={r.id}
+                              className="flex items-center justify-between bg-yellow-50 p-3 rounded-xl mb-2"
+                            >
+                              <div>
+                                <span className="font-bold">
+                                  {user?.name || "نامشخص"}
+                                </span>
+                                <span className="mx-2">{r.amount} لیتر</span>
+                                <span className="text-xs text-gray-500">
+                                  {formatDate(r.timestamp)}
+                                </span>
+                              </div>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    const updated = records.map((rec) => {
+                                      if (rec.id === r.id) {
+                                        return { ...rec, status: "confirmed" };
+                                      }
+                                      return rec;
+                                    });
+                                    setRecords(updated);
+                                    alert("✅ حواله تایید شد");
+                                  }}
+                                  className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-green-600"
+                                >
+                                  تایید
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const updated = records.filter(
+                                      (rec) => rec.id !== r.id,
+                                    );
+                                    setRecords(updated);
+                                    alert("❌ حواله رد شد");
+                                  }}
+                                  className="bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-600"
+                                >
+                                  رد
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })
+                    ) : (
+                      <div className="text-gray-400">
+                        هیچ حواله‌ای در انتظار تایید نیست
+                      </div>
+                    )}
+                  </div>
+
+                  {/* مدیریت قطعی برق */}
+                  <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 className="font-bold text-gray-700 mb-3">
+                      ⚡ مدیریت قطعی برق
+                    </h3>
+                    <button
+                      onClick={() => setShowOutageModal(true)}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition"
+                    >
+                      + افزودن قطعی جدید
+                    </button>
+                    {showOutageModal && (
+                      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+                        <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full">
+                          <h3 className="font-bold text-lg mb-4">
+                            افزودن قطعی برق
+                          </h3>
+                          <div className="space-y-3">
+                            <input
+                              type="date"
+                              value={newOutage.date}
+                              onChange={(e) =>
+                                setNewOutage({
+                                  ...newOutage,
+                                  date: e.target.value,
+                                })
+                              }
+                              className="w-full px-4 py-2 rounded-xl border border-gray-200"
+                            />
+                            <input
+                              type="time"
+                              value={newOutage.start}
+                              onChange={(e) =>
+                                setNewOutage({
+                                  ...newOutage,
+                                  start: e.target.value,
+                                })
+                              }
+                              className="w-full px-4 py-2 rounded-xl border border-gray-200"
+                              placeholder="ساعت شروع"
+                            />
+                            <input
+                              type="time"
+                              value={newOutage.end}
+                              onChange={(e) =>
+                                setNewOutage({
+                                  ...newOutage,
+                                  end: e.target.value,
+                                })
+                              }
+                              className="w-full px-4 py-2 rounded-xl border border-gray-200"
+                              placeholder="ساعت پایان"
+                            />
+                          </div>
+                          <div className="flex gap-2 mt-4">
+                            <button
+                              onClick={() => {
+                                if (
+                                  !newOutage.date ||
+                                  !newOutage.start ||
+                                  !newOutage.end
+                                ) {
+                                  return alert("لطفاً تمام فیلدها را پر کنید");
+                                }
+                                setOutages([
+                                  ...outages,
+                                  { ...newOutage, id: generateId() },
+                                ]);
+                                setShowOutageModal(false);
+                                setNewOutage({ date: "", start: "", end: "" });
+                                alert("✅ قطعی برق اضافه شد");
+                              }}
+                              className="bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700"
+                            >
+                              ذخیره
+                            </button>
+                            <button
+                              onClick={() => setShowOutageModal(false)}
+                              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl hover:bg-gray-300"
+                            >
+                              لغو
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      // ======================== اپلیکیشن اصلی ========================
+      const App = () => {
+        const [currentUser, setCurrentUser] = useState(null);
+
+        if (!currentUser) {
+          return <LoginPage onLogin={setCurrentUser} />;
+        }
+
+        return (
+          <UserDashboard
+            user={currentUser}
+            onLogout={() => setCurrentUser(null)}
+          />
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>
